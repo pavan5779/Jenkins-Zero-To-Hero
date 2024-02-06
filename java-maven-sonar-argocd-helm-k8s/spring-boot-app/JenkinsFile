@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Static Code Analysis') {
             environment {
-                SONAR_URL = "http://localhost:9000"
+                SONAR_URL = "http://localhost:9000/projects"
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'sonarqube', usernameVariable: 'SONAR_USERNAME', passwordVariable: 'SONAR_PASSWORD')]) {
