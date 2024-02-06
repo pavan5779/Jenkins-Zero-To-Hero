@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Static Code Analysis') {
             environment {
-                SONAR_HOST_URL = "http://localhost:9000/sessions/new?return_to=%2F"
+                SONAR_HOST_URL = "http://localhost:9000"
             }
             steps {
                 withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
