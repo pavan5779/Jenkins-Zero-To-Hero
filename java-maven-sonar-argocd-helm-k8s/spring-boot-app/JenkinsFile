@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                sh 'echo "Checking out code"'
+                sh 'echo passed'
                 git branch: 'main', url: 'https://github.com/pavan5779/Jenkins-Zero-To-Hero.git'
             }
         }
@@ -29,14 +29,15 @@ pipeline {
                         cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
                         mvn sonar:sonar \
                             -Dsonar.login=$SONAR_AUTH_TOKEN \
-                            -Dsonar.host.url=$SONAR_HOST_URL
+                            -Dsonar.host.url=${SONAR_HOST_URL}
                     '''
                 }
             }
         }
         stage('Build and Push Docker Image') {
             environment {
-                DOCKER_IMAGE = "pavan5779/spring-boot:${BUILD_NUMBER}"
+                DOCKER_IMAGE = "pavan3/spring-boot:${BUILD_NUMBER}"
+                REGISTRY_CREDENTIALS = credentials('docker')
             }
             steps {
                 script {
@@ -51,12 +52,14 @@ pipeline {
         stage('Update Deployment File') {
             environment {
                 GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
+                GIT_USER_NAME = "pavan5779"
             }
             steps {
                 withCredentials([string(credentialsId: 'GitHub', variable: 'GITHUB_TOKEN')]) {
                     sh '''
-                        git config user.email "pavankalyanmeda5779@gmail.com"
-                        git config user.name "pavan5779"
+                        git config user.email "pavankalyanmeda0@gmail.com"
+                        git config user.name "Pavan Kalyan"
+                        BUILD_NUMBER=${BUILD_NUMBER}
                         sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
                         git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
                         git commit -m "Update deployment image to version ${BUILD_NUMBER}"
