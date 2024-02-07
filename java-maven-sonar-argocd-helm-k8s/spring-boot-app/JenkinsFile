@@ -36,7 +36,7 @@ pipeline {
         }
         stage('Build and Push Docker Image') {
             environment {
-                DOCKER_IMAGE = "pavan3/spring-boot:${BUILD_NUMBER}"
+                DOCKER_IMAGE = "pavan5779/spring-boot:${BUILD_NUMBER}"
                 REGISTRY_CREDENTIALS = credentials('docker')
             }
             steps {
