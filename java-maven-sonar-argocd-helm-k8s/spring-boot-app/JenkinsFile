@@ -44,7 +44,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.build DOCKER_IMAGE, '/path/to/dockerfile'
+                    docker.build DOCKER_IMAGE, 'java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile'
                     docker.withRegistry(ECR_REGISTRY_URL, 'ecr:ap-southeast-2') {
                         docker.image(DOCKER_IMAGE).push()
                     }
