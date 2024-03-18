@@ -37,8 +37,8 @@ pipeline {
     stage('Build and Push Docker Image') {
             environment {
                 DOCKER_IMAGE = "pavan5779/getting-started:${BUILD_NUMBER}"
-                AWS_ACCESS_KEY_ID     = credentials('AKIAU6GD2ZB7PLWX2KL7')
-                AWS_SECRET_ACCESS_KEY = credentials('AWS Credentials')
+                AWS_ACCESS_KEY_ID     = credentials('Aws Credentials')
+                AWS_SECRET_ACCESS_KEY = credentials('Aws Credentials')
                 AWS_REGION            = 'ap-southeast-2'
                 ECR_REGISTRY_URL      = '339713116286.dkr.ecr.ap-southeast-2.amazonaws.com/jenkins'
             }
