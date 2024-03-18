@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Static Code Analysis') {
             environment {
-                SONAR_HOST_URL = "http://172.20.105.186:9000"
+                SONAR_HOST_URL = "http://3.107.22.100:9000"
             }
             steps {
                 withCredentials([string(credentialsId: 'Sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
@@ -34,37 +34,29 @@ pipeline {
                 }
             }
         }
-        stage('Build and Push Docker Image') {
+    stage('Build and Push Docker Image') {
             environment {
-                DOCKER_IMAGE = "pavan5779/spring-boot:${BUILD_NUMBER}"
+                DOCKER_IMAGE = "pavan5779/getting-started:${BUILD_NUMBER}"
+                AWS_ACCESS_KEY_ID     = credentials('AKIAU6GD2ZB7PLWX2KL7')
+                AWS_SECRET_ACCESS_KEY = credentials('AWS Credentials')
+                AWS_REGION            = 'ap-southeast-2'
+                ECR_REGISTRY_URL      = '339713116286.dkr.ecr.ap-southeast-2.amazonaws.com/jenkins'
             }
             steps {
                 script {
-                    sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .'
-                    sh 'docker push ${DOCKER_IMAGE}'
-                }
-            }
-        }
-        stage('Update Deployment File') {
-            environment {
-                GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
-                GIT_USER_NAME = "pavan5779"
-            }
-            steps {
-                withCredentials([string(credentialsId: 'GitHub', variable: 'GITHUB_TOKEN')]) {
-                    sh '''
-                        git config user.email "pavankalyanmeda0@gmail.com"
-                        git config user.name "Pavan kalyan"
-                        BUILD_NUMBER=${BUILD_NUMBER}
-                        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                        git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                        git add java-maven-sonar-argocd-helm-k8s/spring-boot-app/.
-                        git log
-                        git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                        git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-                    '''
+                    docker.build DOCKER_IMAGE, '/path/to/dockerfile'
+                    docker.withRegistry(ECR_REGISTRY_URL, 'ecr:ap-southeast-2') {
+                        docker.image(DOCKER_IMAGE).push()
+                    }
                 }
             }
         }
     }
+
+    post {
+        failure {
+            echo 'One or more stages failed, but the pipeline will continue...'
+        }
+    }
 }
+        
