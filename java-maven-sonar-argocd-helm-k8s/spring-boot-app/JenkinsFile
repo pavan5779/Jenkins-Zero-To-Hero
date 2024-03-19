@@ -39,7 +39,7 @@ pipeline {
                         sh 'docker build -t ${DOCKER_IMAGE}, ./java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile'
                     
                     // Tag Docker image with 'latest'
-                        sh '${DOCKER_IMAGE} ${ECR_REGISTRY_URL}:latest'
+                        sh 'docker tag ${DOCKER_IMAGE} ${ECR_REGISTRY_URL}:latest'
                     
                     // Push Docker image to ECR
                         sh 'docker push ${ECR_REGISTRY_URL}:latest'
