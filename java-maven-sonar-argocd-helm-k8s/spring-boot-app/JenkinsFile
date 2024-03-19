@@ -10,6 +10,7 @@ pipeline {
             steps {
                 sh 'echo passed'
                 git branch: 'main', url: 'git@github.com:pavan5779/Jenkins-Zero-To-Hero.git'
+                sh 'chown -R root:root https://github.com/pavan5779/Jenkins-Zero-To-Hero.git'
             }
         }
         stage('Build and Test') {
