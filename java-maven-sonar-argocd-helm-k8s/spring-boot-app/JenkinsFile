@@ -38,7 +38,7 @@ pipeline {
                     }
                     
                     // Build the Docker image
-                    docker.build DOCKER_IMAGE, '/var/lib/jenkins/workspace/jenkins/java-maven-sonar-argocd-helm-k8s/spring-boot-app'
+                    docker.build DOCKER_IMAGE, '/var/lib/jenkins/workspace/jenkins/java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile'
                     
                     // Tag the Docker image
                     docker.tag DOCKER_IMAGE, "${ECR_REGISTRY_URL}:latest"
