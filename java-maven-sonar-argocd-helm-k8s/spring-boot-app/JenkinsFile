@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'abhishekf5/maven-abhishek-docker-agent:v1'
-            args '-u root:root -v /var/run/docker.sock:/var/run/docker.sock -v ~/.aws:/aws' // Mount Docker socket to access the host's Docker daemon
+            args '-u root:root -v /var/run/docker.sock:/var/run/docker.sock' // Mount Docker socket to access the host's Docker daemon
         }
     }
     stages {
@@ -43,9 +43,8 @@ pipeline {
             steps {
                 script {
                     // Authenticate with ECR
-                        sh '''
-                            apt update -y 
-                            apt install aws-cli
+                        sh 'apt update -y' 
+                        sh   'apt install aws-cli -y'
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Aws Credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
 
