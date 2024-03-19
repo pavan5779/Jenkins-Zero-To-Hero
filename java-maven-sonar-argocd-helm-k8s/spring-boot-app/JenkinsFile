@@ -1,6 +1,6 @@
 pipeline {
     agent any
-     stages {
+    stages {
         stage('Build and Test') {
             steps {
                 sh 'ls -ltr'
@@ -36,10 +36,15 @@ pipeline {
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
 
                     }
-                    docker.build DOCKER_IMAGE, '/var/lib/jenkins/workspace/jenkins/java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile'
+                    // Build Docker image
+                    docker.build DOCKER_IMAGE, './java-maven-sonar-argocd-helm-k8s/spring-boot-app'
+
+                    // Tag Docker image with 'latest'
                     docker.tag DOCKER_IMAGE, "${ECR_REGISTRY_URL}:latest"
+
+                    // Push Docker image to ECR
                     docker.withRegistry(ECR_REGISTRY_URL, 'ecr:ap-southeast-2') {
-                    docker.image("${ECR_REGISTRY_URL}:latest").push()
+                        docker.image("${ECR_REGISTRY_URL}:latest").push()
                     }
                 }
             }
