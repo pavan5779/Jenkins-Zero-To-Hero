@@ -25,7 +25,7 @@ pipeline {
         }
         stage('Build and Push Docker Image') {
             environment {
-                DOCKER_IMAGE = 'gettingstarted:${BUILD_NUMBER}'
+                DOCKER_IMAGE = 'gettingstarted'
                 AWS_REGION = 'ap-southeast-2'
                 ECR_REGISTRY_URL = '339713116286.dkr.ecr.ap-southeast-2.amazonaws.com/jenkins'
             }
@@ -36,10 +36,10 @@ pipeline {
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
                     }
                     // Build Docker image
-                        sh 'docker build -t ${DOCKER_IMAGE} ./java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile'
+                        sh 'docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} ./java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile'
                     
                     // Tag Docker image with 'latest'
-                        sh 'docker tag ${DOCKER_IMAGE} ${ECR_REGISTRY_URL}:latest'
+                        sh 'docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${ECR_REGISTRY_URL}:latest'
                     
                     // Push Docker image to ECR
                         sh 'docker push ${ECR_REGISTRY_URL}:latest'
