@@ -35,31 +35,32 @@ pipeline {
             }
         }
         stage('Build and Push Docker Image') {
-    environment {
-        DOCKER_IMAGE = "pavan5779/getting-started:${BUILD_NUMBER}"
-    }
-    steps {
-        script {
-            // Authenticate with ECR
-            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Aws Credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
+            environment {
+                DOCKER_IMAGE = "pavan5779/getting-started:${BUILD_NUMBER}"
+                AWS_REGION = 'ap-southeast-2'
+                ECR_REGISTRY_URL = '339713116286.dkr.ecr.ap-southeast-2.amazonaws.com/jenkins'
             }
-            
-            // Build the Docker image
-            docker.build DOCKER_IMAGE, 'java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile'
-            
-            // Tag the Docker image
-            docker.tag DOCKER_IMAGE, "${ECR_REGISTRY_URL}:latest"
-            
-            // Push the Docker image to ECR
-            docker.withRegistry(ECR_REGISTRY_URL, 'ecr:ap-southeast-2') {
-                docker.image("${ECR_REGISTRY_URL}:latest").push()
+            steps {
+                script {
+                    // Authenticate with ECR
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Aws Credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                        sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
+                    }
+                    
+                    // Build the Docker image
+                    docker.build DOCKER_IMAGE, 'java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile'
+                    
+                    // Tag the Docker image
+                    docker.tag DOCKER_IMAGE, "${ECR_REGISTRY_URL}:latest"
+                    
+                    // Push the Docker image to ECR
+                    docker.withRegistry(ECR_REGISTRY_URL, 'ecr:ap-southeast-2') {
+                        docker.image("${ECR_REGISTRY_URL}:latest").push()
+                    }
+                }
             }
         }
     }
-}
-}
-
     post {
         failure {
             echo 'One or more stages failed, but the pipeline will continue...'
