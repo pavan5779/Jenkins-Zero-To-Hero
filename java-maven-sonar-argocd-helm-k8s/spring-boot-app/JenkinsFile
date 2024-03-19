@@ -1,11 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'abhishekf5/maven-abhishek-docker-agent:v1'
-            args '-u root:root -v /var/run/docker.sock:/var/run/docker.sock' // Mount Docker socket to access the host's Docker daemon
-            reuseNode false
-        }
-    }
+    agent any
      stages {
         stage('Build and Test') {
             steps {
