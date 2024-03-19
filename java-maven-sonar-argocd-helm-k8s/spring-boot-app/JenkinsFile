@@ -9,7 +9,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 sh 'echo passed'
-                #sh 'chown -R root:root Jenkins-Zero-To-Hero'
                 git branch: 'main', url: 'git@github.com:pavan5779/Jenkins-Zero-To-Hero.git'
                 
             }
