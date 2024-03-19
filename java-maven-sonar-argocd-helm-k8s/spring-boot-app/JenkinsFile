@@ -36,16 +36,10 @@ pipeline {
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
 
                     }
-                    
-                    // Build the Docker image
                     docker.build DOCKER_IMAGE, '/var/lib/jenkins/workspace/jenkins/java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile'
-                    
-                    // Tag the Docker image
                     docker.tag DOCKER_IMAGE, "${ECR_REGISTRY_URL}:latest"
-                    
-                    // Push the Docker image to ECR
                     docker.withRegistry(ECR_REGISTRY_URL, 'ecr:ap-southeast-2') {
-                        docker.image("${ECR_REGISTRY_URL}:latest").push()
+                    docker.image("${ECR_REGISTRY_URL}:latest").push()
                     }
                 }
             }
