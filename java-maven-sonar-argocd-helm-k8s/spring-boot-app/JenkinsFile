@@ -34,18 +34,15 @@ pipeline {
                     // Authenticate with ECR
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Aws Credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                         sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY_URL}"
-
                     }
                     // Build Docker image
                     docker.build DOCKER_IMAGE, './java-maven-sonar-argocd-helm-k8s/spring-boot-app'
-
+                    
                     // Tag Docker image with 'latest'
                     docker.tag DOCKER_IMAGE, "${ECR_REGISTRY_URL}:latest"
-
+                    
                     // Push Docker image to ECR
-                    docker.withRegistry(ECR_REGISTRY_URL, 'ecr:ap-southeast-2') {
-                        docker.image("${ECR_REGISTRY_URL}:latest").push()
-                    }
+                    sh "docker push ${ECR_REGISTRY_URL}:latest"
                 }
             }
         }
