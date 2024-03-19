@@ -44,9 +44,9 @@ pipeline {
                 script {
                     // Authenticate with ECR
                         sh '''
-                            sudo apt update
-                            sudo apt install python3-pip
-                            sudo pip3 install awscli
+                            apt update
+                            apt install python3-pip
+                            pip3 install awscli
                             aws --version
                         '''
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'Aws Credentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
